@@ -1,18 +1,16 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useState, useContext } from "react";
-import { UserContext } from "../sign-up";
+import { useSession } from "../../ctx";
 
 export default function Home() {
-  const user = useContext(UserContext);
+  const { session } = useSession();
   return (
-    // <UserContext.Provider value={user}>
     <View style={styles.container}>
       <Text>Home</Text>
-      <Pressable onPress={() => console.log(user)}>
+      <Pressable onPress={() => console.log(session)}>
         <Text>View user</Text>
       </Pressable>
     </View>
-    //  </UserContext.Provider>
   );
 }
 

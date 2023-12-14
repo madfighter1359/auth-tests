@@ -1,12 +1,20 @@
 import React from "react";
 import { useStorageState } from "./useStorageState";
+import { auth } from "./firebase-config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { User } from "firebase/auth";
 
-const AuthContext = React.createContext<{
-  signIn: () => void;
+interface AuthContextProps {
+  signIn: (email: string, password: string) => void;
   signOut: () => void;
-  session?: string | null;
-  isLoading: boolean;
-} | null>(null);
+  session?: User | null;
+}
+
+const AuthContext = React.createContext<AuthContextProps>({
+  signIn: (email: string, password: string) => {},
+  signOut: () => {},
+  session: null,
+});
 
 // This hook can be used to access the user info.
 export function useSession() {
@@ -21,20 +29,27 @@ export function useSession() {
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
-  const [[isLoading, session], setSession] = useStorageState("session");
+  const [session, setSession] = React.useState<User | null>();
 
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => {
-          // Perform sign-in logic here
-          setSession("xxx");
+        signIn: (email: string, password: string) => {
+          createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              const user = userCredential.user;
+              setSession(user);
+            })
+            .catch((e) => {
+              const errorCode = e.code;
+              const errorMessage = e.message;
+              console.log(errorCode, errorMessage);
+            });
         },
         signOut: () => {
           setSession(null);
         },
         session,
-        isLoading,
       }}
     >
       {props.children}
