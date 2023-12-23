@@ -6,6 +6,7 @@ export default function Layout() {
   return (
     <Tabs>
       <Tabs.Screen name="index" />
+      <Tabs.Screen name="rooms" />
       <Tabs.Screen name="profile" />
     </Tabs>
   );
